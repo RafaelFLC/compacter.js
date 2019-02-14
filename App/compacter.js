@@ -1,3 +1,5 @@
+const fs = require( 'fs' );
+
 const compc = ( _paths ) => {
 
     let message;
@@ -8,14 +10,21 @@ const compc = ( _paths ) => {
 
     if ( validate( _paths ) ) {
 
-        // message = 'after log paths...';
-        // result = 201;
+        dirs.map
 
-        console.log( JSON.stringify(dirs) );
+        console.log( dirs );
 
     }
 
     function validate ( _paths ) {
+
+        const end = ( _result, _params ) => {
+
+            if ( _params !== undefined && _params instanceof Array )
+                [ result, message ] = _params;
+
+            return _result;
+        }
 
         if ( _paths === undefined || _paths === null )
             return end( false, [ 500, 'paths doesn\'t found' ] );
@@ -24,47 +33,46 @@ const compc = ( _paths ) => {
 
             if ( _paths.length === 0 ) 
                 return end( false, [ 500, 'paths doesn\'t found' ] );
-            else {
 
-                dirs = _paths.map( path => { 
-                    return { 
-                        exist : exist( path ), 
-                        path
-                    }
-                });
+            dirs = _paths.map( path => { return { exist : exist( path ), path } });
 
-                let result = dirs.filter( item => item.exist == false );
+            let result = dirs.filter( item => item.exist.result == false );
 
-                if ( result.length === dirs.length )
-                    return end( false, [ 501, 'None of the paths exists' ] );
+            if ( result.length === dirs.length )
+                return end( false, [ 501, 'None of the paths exists' ] );
 
-                return end( true, [ 200, 'all ok' ] );
-
-            }
+            return end( true );
             
-        } else
-            if ( ! exist( _paths ) )
+        } else {
+
+            let exist = exist( _paths );
+
+            if ( ! exist.result )
                 return end( false, [ 500, 'path doesn\'t found' ] );
-            // else 
-
-        return end( true, [ 201, 'all oki' ] );
-
-        function exist ( path ) {
-
-            // console.log( path );
-
-            return true;
-
+            else {
+                dirs = [{ exist, path: _paths }]; 
+                return end( true );
+            }
         }
 
-        function end ( _result, _params = null ) {
+    }
 
-            if ( _params !== undefined && _params instanceof Array )
-                [ result, message ] = _params;
+    
+    function exist ( path ) {
 
-            return _result;
+        let stats = fs.lstatSync( path );
 
-        }
+        if ( stats )
+            return {
+                    result: true, 
+                    isDir: stats.isDirectory(), 
+                    isFile: stats.isFile()
+                }
+        else 
+            return {
+                result: false, 
+                stats: stats
+            }
 
     }
     
