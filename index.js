@@ -6,7 +6,7 @@ program
     .alias( 'a' )
     .action( paths => {
 
-        var response = compc();
+        var response = compc( paths );
 
         console.log( response );
     });
