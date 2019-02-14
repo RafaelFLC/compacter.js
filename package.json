@@ -1,0 +1,14 @@
+{
+  "name": "compact",
+  "version": "1.0.0",
+  "description": "Compact the .js .html and the .css ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DevRafaelflc",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^2.19.0"
+  }
+}
