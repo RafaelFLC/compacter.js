@@ -8,7 +8,7 @@ program
 
         var response = compc( paths );
 
-        console.log( response );
+        // console.log( response );
     });
 
 program
