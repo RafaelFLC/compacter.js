@@ -46,6 +46,8 @@ function process ( _file ) {
 
     let initTime = new Date().getTime();
 
+    let endTime;
+
     let split = _file.split( '.' );
 
     let length = split.length - 1;
@@ -57,12 +59,14 @@ function process ( _file ) {
     fs.readFile( _file, 'utf8', (err, content) => {
 
         // remove all comments 
+        // replace the break and the tabs line with space
+        // replace the break line with a space
         let origin = content
             .replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm , '' )
+            .replace( /<!--(.*?)-->/g, '' )
+            // .replace( /(}(?!;))/g, '}; ' )
             .replace( /(\r\n|\n|\r)/gm, '' )
-            .replace( /(}(?!;))/g, '}; ' )
             .replace( /\s\s+/g, ' ');
-        // replace the break and the tabs line with space
 
         fs.rename( _file, fname , err => {
             if (err) {
@@ -77,7 +81,15 @@ function process ( _file ) {
         fs.writeFile( _file, origin, (err) => {
             if (err) throw err;
     
+            endTime = new Date().getTime();
+
             log('The file was succesfully saved!');
+
+            log( 'init: ' + initTime );
+            log( 'end: ' + endTime );
+
+            log( getTime( endTime - initTime ) );
+
         }); 
 
         // for( var i = 0; i < origin.length; i++ ){
@@ -151,6 +163,27 @@ function getFileSize(fileSize) {
     }
 }
 
+function getTime ( timeMs ) {
+
+    let ms = 1000; 
+    let s = ms * 60;
+    let min = s * 60; 
+    let h = min * 60; 
+
+    let unity = '';
+
+    if ( timeMs >= h )
+        unity = (timeMs / h) + ' h'; 
+    else if ( timeMs >= min )
+        unity = ( timeMs / min ) + ' m'; 
+    else if ( timeMs >= s )
+        unity = ( timeMs / s ) + ' s'; 
+    else 
+        unity = ( timeMs / ms ) + ' ms';
+
+    return unity;
+
+}
 
 function exist ( path ) {
 
