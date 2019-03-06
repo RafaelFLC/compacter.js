@@ -42,8 +42,6 @@ function process ( _file ) {
 
     });
 
-    
-
     let initTime = new Date().getTime();
 
     let endTime;
@@ -52,9 +50,7 @@ function process ( _file ) {
 
     let length = split.length - 1;
 
-    let fname = split[ length - 1 ].replace('/', '') + '-original.' + split[ length ];
-
-    let content = '';
+    let fname = split[ length - 1 ] + '-original.' + split[ length ];
 
     fs.readFile( _file, 'utf8', (err, content) => {
 
@@ -84,9 +80,6 @@ function process ( _file ) {
             endTime = new Date().getTime();
 
             log('The file was succesfully saved!');
-
-            log( 'init: ' + initTime );
-            log( 'end: ' + endTime );
 
             log( getTime( endTime - initTime ) );
 

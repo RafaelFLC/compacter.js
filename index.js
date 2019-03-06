@@ -7,8 +7,6 @@ program
     .action( paths => {
 
         var response = compc( paths );
-
-        // console.log( response );
     });
 
 program
