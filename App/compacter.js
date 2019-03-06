@@ -1,13 +1,16 @@
 const fs = require( 'fs' );
 
+const log = require( './log' );
+
 let message;
 
 let result;
 
 let dirs;
 
-
 const compc = ( _paths ) => {
+
+    log( 'initializing the compacter module...' );
 
     if ( validate( _paths ) ) {
 
@@ -29,12 +32,19 @@ const compc = ( _paths ) => {
     }
     
     return { message, result };
-
 }
 
-
-
 function process ( _file ) {
+
+    fs.stat( _file, (err, stats) => {
+
+        log( 'Processing -f ' + _file + ' { size : '+ getFileSize(stats.size) +' } ' );
+
+    });
+
+    
+
+    let initTime = new Date().getTime();
 
     let split = _file.split( '.' );
 
@@ -43,17 +53,6 @@ function process ( _file ) {
     let fname = split[ length - 1 ].replace('/', '') + '-original.' + split[ length ];
 
     let content = '';
-
-    // fs.rename( _file, fname , err => {
-    //     if (err) {
-    //         console.log( 'error', err );
-    //         return;
-    //     }
-
-    //     console.log( '\r\n ... file renamed successfully' );
-    // });
-
-    console.log( 'init processin file ... ' + _file + '\r\n' );
 
     fs.readFile( _file, 'utf8', (err, content) => {
 
@@ -64,9 +63,22 @@ function process ( _file ) {
             .replace( /(}(?!;))/g, '}; ' )
             .replace( /\s\s+/g, ' ');
         // replace the break and the tabs line with space
-        
 
-        console.log( origin );
+        fs.rename( _file, fname , err => {
+            if (err) {
+                console.log( 'error', err );
+                return;
+            }
+
+            log( 'file renamed successfully to [' + fname + ']' );
+        });
+
+
+        fs.writeFile( _file, origin, (err) => {
+            if (err) throw err;
+    
+            log('The file was succesfully saved!');
+        }); 
 
         // for( var i = 0; i < origin.length; i++ ){
         //     console.log( origin[i] );
@@ -74,16 +86,6 @@ function process ( _file ) {
 
 
     });
-
-
-    // fs.writeFile( _file, '/* new file */', (err) => {
-    //     if (err) throw err;
-    
-    //     console.log("The file was succesfully saved!");
-    // }); 
-
-
-
 }
 
 function validate ( _paths ) {
@@ -132,7 +134,21 @@ function validate ( _paths ) {
             return end( true );
         }
     }
+}
 
+function getFileSize(fileSize) {
+    if (fileSize > 1000000000) {
+        return (fileSize / 1000000000.0)
+            .toPrecision(3) + " gigabytes";
+    } else if (fileSize > 1000000) {
+        return (fileSize / 1000000.0)
+            .toPrecision(3) + " megabytes";
+    } else if (fileSize > 1000) {
+        return (fileSize / 1000.0)
+            .toPrecision(3) + " kilobytes";
+    } else {
+        return fileSize + " bytes"
+    }
 }
 
 
