@@ -59,9 +59,14 @@ function process ( _file ) {
         // replace the break line with a space
         let origin = content
             .replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm , '' )
-            .replace( /<!--(.*?)-->/g, '' )
+            .replace( /<!--(.*?)-->/g, '' );
             // .replace( /(}(?!;))/g, '}; ' )
-            .replace( /(\r\n|\n|\r)/gm, '' )
+
+        let matchs = origin.match( /[^;]$/gm );
+
+        
+
+        origin.replace( /(\r\n|\n|\r)/gm, '' )
             .replace( /\s\s+/g, ' ');
 
         fs.rename( _file, fname , err => {
